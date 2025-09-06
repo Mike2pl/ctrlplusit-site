@@ -436,7 +436,7 @@
         ctx.rotate(a); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R,0); ctx.strokeStyle='rgba(255,42,61,0.9)'; ctx.lineWidth=3*devicePixelRatio; ctx.stroke();
         ctx.restore();
         // tekst
-        ctx.font=f`${14*devicePixelRatio}px ui-sans-serif`; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='center'; ctx.fillText(Math.round(val*100)+'%', cx, cy-10*devicePixelRatio);
+        ctx.font=`${14*devicePixelRatio}px ui-sans-serif`; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='center'; ctx.fillText(Math.round(val*100)+'%', cx, cy-10*devicePixelRatio);
       }
       size(); let target=Math.random()*0.9+0.1; let cur=0; function anim(){ cur += (target-cur)*0.02; if(Math.abs(target-cur)<0.01) target=Math.random()*0.9+0.1; draw(cur); requestAnimationFrame(anim); }
       window.addEventListener('resize',()=>{ size(); });
