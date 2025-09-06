@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CTRL+IT — Usługi IT i CCTV</title>
+  <meta name="description" content="CTRL+IT — nowoczesne usługi IT i monitoring CCTV. Sieci, światłowody, bezpieczeństwo, wdrożenia i serwis. Ciemny motyw z czerwonymi akcentami LED." />
+  <meta name="theme-color" content="#0b0b0f" />
+  <style>
+    /* Base */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    :root{
+      --bg:#0b0b0f;--surface:#12121a;--muted:#9aa0a6;--text:#e8eaed;--accent:#ff2a3d;--accent2:#ff6b6b;--border:rgba(255,255,255,.08);--radius:18px
+    }
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;color:var(--text);background:var(--bg);overflow-x:hidden}
+    /* delikatna siatka LED + poświata */
+    body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.6;background-image:radial-gradient(circle at 2px 2px, rgba(255,60,70,.16) 1px, transparent 2px),radial-gradient(circle at 1px 1px, rgba(255,60,70,.06) 1px, transparent 2px);background-size:40px 40px,20px 20px}
+
+    /* Canvas tła (światłowody) */
+    #bg{position:fixed;inset:0;z-index:0;display:block;pointer-events:none}
+
+    /* Cursor LED */
+    #cursorLed{position:fixed;z-index:20;width:12px;height:12px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle at 30% 30%, #fff, var(--accent));box-shadow:0 0 18px var(--accent),0 0 38px var(--accent);transform:translate(-50%,-50%);opacity:.85}
+
+    /* Header/Nav */
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(to bottom, rgba(10,10,14,.8), rgba(10,10,14,.45));backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+    .logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800}
+    .logo svg{width:32px;height:32px;filter:drop-shadow(0 0 10px rgba(255,42,61,.4))}
+    nav ul{list-style:none;display:flex;gap:20px;margin:0;padding:0}
+    nav a{color:var(--muted);text-decoration:none;font-size:15px;padding:8px 10px;border-radius:12px;border:1px solid transparent}
+    nav a:hover{color:#fff;border-color:var(--border);background:rgba(255,255,255,.03)}
+    .menu-toggle{display:none;background:none;border:none;color:#fff;font-size:22px;padding:6px;border-radius:12px}
+    .nav-cta{display:flex;gap:10px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;padding:10px 16px;text-decoration:none;color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));font-weight:700;letter-spacing:.2px}
+    .btn.primary{background:radial-gradient(120% 200% at 0% 0%, rgba(255,42,61,.22), rgba(255,42,61,.08)),linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:rgba(255,42,61,.35);box-shadow:0 0 24px rgba(255,42,61,.25), inset 0 0 20px rgba(255,42,61,.12)}
+    @media(max-width:980px){nav{display:none}header.open nav{display:block;position:absolute;left:0;right:0;top:100%;background:rgba(10,10,14,.98);border-bottom:1px solid var(--border)}nav ul{flex-direction:column;padding:10px}.menu-toggle{display:inline-block}}
+
+    main section{position:relative;z-index:1;padding:clamp(60px,8vw,110px) 0}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,5vw,48px);align-items:center}
+    .hero h1{font-size:clamp(28px,3.4vw,56px);line-height:1.04;margin:0 0 14px}
+    .accent{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 24px rgba(255,42,61,.35)}
+    .lead{color:var(--muted);font-size:clamp(15px,1.2vw,18px);margin:0 0 22px}
+    .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+
+    .mockup{position:relative;aspect-ratio:4/3;border-radius:calc(var(--radius) + 8px);background:linear-gradient(160deg, rgba(255,42,61,.18), transparent 40%),radial-gradient(120% 120% at 100% 0%, rgba(255,42,61,.12), transparent 60%), var(--surface);border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.45);overflow:hidden}
+    .mockup::after{content:"REC • 1080p";position:absolute;top:12px;right:14px;font-size:12px;letter-spacing:.8px;color:#ffcccc;background:rgba(0,0,0,.35);padding:4px 8px;border-radius:999px;border:1px solid var(--border);box-shadow:inset 0 0 10px rgba(255,42,61,.25)}
+    .scan{position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(255,255,255,.06) 0 1px, transparent 1px 3px);mix-blend-mode:overlay;animation:scan 6s linear infinite;opacity:.6}
+    @keyframes scan{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+
+    .section-title{display:flex;align-items:center;gap:10px;margin:0 0 26px}
+    .section-title h2{margin:0;font-size:clamp(22px,2.2vw,34px)}
+    .led{width:10px;height:10px;background:radial-gradient(circle at 30% 30%, #fff, var(--accent));border-radius:50%;box-shadow:0 0 14px var(--accent),0 0 28px var(--accent)}
+
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:980px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+    .card .icon{width:28px;height:28px;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(255,42,61,.35))}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+
+    .portfolio .thumb{position:relative;aspect-ratio:16/10;border-radius:calc(var(--radius) - 4px);overflow:hidden;border:1px solid var(--border);background:#0f0f15}
+    .thumb .overlay{position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.0));opacity:0;transition:opacity .25s}
+    .thumb:hover .overlay{opacity:1}
+    .thumb .zoom{position:absolute;bottom:10px;right:10px;font-size:12px;background:rgba(0,0,0,.5);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+
+    .lightbox{position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
+    .lightbox.open{display:flex}
+    .lightbox .img{width:min(1100px,92vw);aspect-ratio:16/9;background:#0a0a0f;border-radius:16px;border:1px solid var(--border);position:relative;overflow:hidden}
+    .lightbox .close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:8px 10px;cursor:pointer;color:#fff}
+
+    form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    form .row{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,textarea{width:100%;background:#0e0e14;color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+    textarea{min-height:120px;resize:vertical}
+    .consent{grid-column:span 2;font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+    .consent input{width:18px;height:18px;margin-top:2px}
+    .form-actions{grid-column:span 2;display:flex;gap:10px;align-items:center}
+
+    footer{border-top:1px solid var(--border);background:rgba(0,0,0,.5);padding:24px 0 36px;color:var(--muted)}
+    .to-top{position:fixed;right:18px;bottom:18px;z-index:18;display:none}
+    .to-top.show{display:inline-flex}
+
+    .reveal{opacity:0;transform:translateY(18px);filter:saturate(.9);transition:opacity .6s, transform .6s, filter .6s}
+    .reveal.in{opacity:1;transform:none;filter:none}
+
+    /* Light theme overrides */
+    html[data-theme="light"]{
+      --bg:#f7f7f9; --surface:#ffffff; --text:#0f1115; --muted:#4b5563; --border:rgba(0,0,0,.12);
+    }
+
+    /* Gauge */
+    #gaugeWrap{display:inline-block; padding:14px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    #gauge{display:block; width:240px; height:140px}
+
+    /* Timeline */
+    .timeline .steps{display:grid; grid-template-columns:repeat(5,1fr); gap:12px}
+    .timeline .step{opacity:.9; transition:transform .35s, opacity .35s}
+    .timeline .step:hover{transform:translateY(-4px); opacity:1}
+    @media(max-width:980px){ .timeline .steps{grid-template-columns:1fr;}}
+
+    /* FAB */
+    .fab{position:fixed; right:18px; bottom:88px; z-index:19}
+    .fab-main{width:56px; height:56px; border-radius:50%; border:1px solid var(--border); background:radial-gradient(120% 200% at 0% 0%, rgba(255,42,61,.22), rgba(255,42,61,.08)); color:#fff; font-size:22px; cursor:pointer; box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .fab .menu{position:absolute; right:0; bottom:64px; display:none; flex-direction:column; gap:8px}
+    .fab.open .menu{display:flex}
+    .fab .menu a{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.03); text-decoration:none; color:var(--text)}
+
+    /* Copy tooltip */
+    .copy-btn{border:1px solid var(--border); background:rgba(255,255,255,.03); color:var(--text); border-radius:10px; padding:4px 8px; cursor:pointer}
+
+    @media (prefers-reduced-motion: reduce){
+      .scan{animation:none}
+      .reveal{transition:none}
+      .card:hover{transform:none}
+    }
+  </style>
+</head>
+<body>
+  <div id="cursorLed" aria-hidden="true"></div>
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <header id="hdr">
+    <div class="container nav">
+      <a class="logo" href="#home" aria-label="Strona główna">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff2a3d"/><stop offset="1" stop-color="#ff6b6b"/></linearGradient></defs>
+          <path d="M6 44C22 40 32 20 58 16" stroke="url(#g1)" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="50" cy="18" r="4" fill="#ff2a3d"/>
+        </svg>
+        <span>CTRL<span class="accent">+IT</span></span>
+      </a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+      <nav aria-label="Główne">
+        <ul>
+          <li><a href="#oferta">Usługi</a></li>
+          <li><a href="#wycena">Wycena</a></li>
+          <li><a href="#portfolio">Realizacje</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+      <div class="nav-cta">
+        <button class="btn" id="themeToggle" aria-pressed="false" title="Przełącz dzień/noc">🌗 Motyw</button>
+        <a class="btn ghost" href="#kontakt">Bezpłatna wycena</a>
+        <a class="btn primary" href="tel:+48000000000">Zadzwoń</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="container hero reveal">
+      <div>
+        <h1><span class="accent">Usługi IT i monitoring CCTV</span><br/> dla szkół i firm</h1>
+        <p class="lead">Sieci komputerowe, światłowody, bezpieczeństwo, zdalny podgląd. Projekt, wdrożenie i serwis — bez przestojów, z gwarancją jakości.</p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#oferta">Zobacz usługi</a>
+          <a class="btn" href="#kontakt">Skontaktuj się</a>
+          <div id="gaugeWrap"><canvas id="gauge"></canvas></div>
+        </div>
+        <div class="stats" style="display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:12px;margin-top:28px">
+          <div class="card" style="text-align:center"><div class="num" data-count="12" style="font-weight:800;font-size:clamp(22px,2.4vw,32px)">0</div><div class="lbl" style="color:var(--muted);font-size:13px">lat doświadczenia</div></div>
+          <div class="card" style="text-align:center"><div class="num" data-count="350" style="font-weight:800;font-size:clamp(22px,2.4vw,32px)">0</div><div class="lbl" style="color:var(--muted);font-size:13px">zrealizowanych obiektów</div></div>
+          <div class="card" style="text-align:center"><div class="num" data-count="99" style="font-weight:800;font-size:clamp(22px,2.4vw,32px)">0</div><div class="lbl" style="color:var(--muted);font-size:13px">% zadowolonych klientów</div></div>
+        </div>
+      </div>
+      <div class="mockup" aria-label="Podgląd CCTV (demo)">
+        <div class="scan" aria-hidden="true"></div>
+        <svg viewBox="0 0 800 600" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Podgląd kamer">
+          <defs>
+            <linearGradient id="cam" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1a1a26"/><stop offset="1" stop-color="#15151f"/></linearGradient>
+            <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <g fill="url(#cam)" stroke="rgba(255,255,255,.06)">
+            <rect x="20" y="20" width="360" height="260" rx="12"/>
+            <rect x="420" y="20" width="360" height="260" rx="12"/>
+            <rect x="20" y="320" width="360" height="260" rx="12"/>
+            <rect x="420" y="320" width="360" height="260" rx="12"/>
+          </g>
+          <g filter="url(#gl)">
+            <circle cx="360" cy="36" r="6" fill="#ff2a3d"/>
+            <circle cx="760" cy="36" r="6" fill="#ff2a3d"/>
+            <circle cx="360" cy="336" r="6" fill="#ff2a3d"/>
+            <circle cx="760" cy="336" r="6" fill="#ff2a3d"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section id="oferta" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Nasze usługi</h2></div>
+      <div class="grid">
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/><circle cx="18" cy="18" r="2" fill="var(--accent)"/></svg><h3>Monitoring wizyjny</h3><p>Kamery IP/4K, rejestratory, analityka obrazu, zdalny podgląd i aplikacje mobilne.</p></article>
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18"/><path d="M7 12a5 5 0 0 1 10 0"/><circle cx="12" cy="12" r="9"/></svg><h3>Światłowody</h3><p>Spawanie, pomiary OTDR, projekt i budowa tras, SFP/GBIC, patch‑panele.</p></article>
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 8h10M7 12h6"/></svg><h3>Sieci LAN/Wi‑Fi</h3><p>Okablowanie, szafy rack, przełączniki PoE, punkty dostępowe, VLAN/QoS.</p></article>
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6-6 6 6v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"/><path d="M9 22v-5a3 3 0 0 1 3-3 3 3 0 0 1 3 3v5"/></svg><h3>Kontrola dostępu</h3><p>Domofony IP, wideobramofony, czytniki kart, integracje z CCTV.</p></article>
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg><h3>Serwery & chmura</h3><p>NAS, backup, NVR, wirtualizacja, VPN i bezpieczne zdalne dostępy.</p></article>
+        <article class="card"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><h3>Serwis & utrzymanie</h3><p>Umowy SLA, monitoring urządzeń, aktualizacje, szybka reakcja 24/7.</p></article>
+      </div>
+    </section>
+
+    <!-- Wycena (konfigurator) -->
+    <section id="wycena" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Wycena online</h2></div>
+      <form id="calc" class="card" style="display:grid;gap:12px;grid-template-columns:repeat(3,1fr);padding:18px">
+        <label>Kamery
+          <input type="number" id="cameras" min="1" max="128" value="8" />
+        </label>
+        <label>Rozdzielczość
+          <select id="res">
+            <option value="2">2 MP (1080p)</option>
+            <option value="5" selected>5 MP</option>
+            <option value="8">8 MP (4K)</option>
+          </select>
+        </label>
+        <label>Długość światłowodu (m)
+          <input type="number" id="fiber" min="0" step="10" value="100" />
+        </label>
+        <label class="consent" style="grid-column:span 3;align-items:center"><input type="checkbox" id="poe"/> Przełączniki PoE</label>
+        <label class="consent" style="grid-column:span 3;align-items:center"><input type="checkbox" id="ups"/> Zabezpieczenie zasilania (UPS)</label>
+        <label class="consent" style="grid-column:span 3;align-items:center"><input type="checkbox" id="remote"/> Zdalny podgląd + konfiguracja aplikacji</label>
+        <div id="quote" class="card" style="grid-column:span 3; display:grid; gap:8px; padding:14px">
+          <div><strong>Szacunkowy koszt:</strong> <span id="sum">—</span></div>
+          <small id="breakdown" style="color:var(--muted)">—</small>
+          <div class="form-actions"><a id="sendQuote" class="btn primary" href="#">Wyślij zapytanie</a></div>
+        </div>
+      </form>
+    </section>
+
+    <section id="timeline" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Jak pracujemy</h2></div>
+      <div class="timeline">
+        <div class="steps">
+          <div class="step card"><strong>1. Audyt</strong><p>Inwentaryzacja i pomiary.</p></div>
+          <div class="step card"><strong>2. Projekt</strong><p>Dobór kamer, tras i zasilania.</p></div>
+          <div class="step card"><strong>3. Instalacja</strong><p>Okablowanie, szafy, montaż.</p></div>
+          <div class="step card"><strong>4. Uruchomienie</strong><p>NVR, aplikacje, testy.</p></div>
+          <div class="step card"><strong>5. Szkolenie</strong><p>Instruktaż + dokumentacja.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Wybrane realizacje</h2></div>
+      <div class="grid portfolio">
+        <a class="card thumb" href="#" data-shot="1" aria-label="Realizacja 1 – magazyn"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="2" aria-label="Realizacja 2 – biurowiec"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="3" aria-label="Realizacja 3 – osiedle"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="4" aria-label="Realizacja 4 – hala"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="5" aria-label="Realizacja 5 – sklep"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="6" aria-label="Realizacja 6 – hotel"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+      </div>
+    </section>
+
+    <section id="faq" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>FAQ</h2></div>
+      <div class="faq" style="display:grid;gap:12px">
+        <div class="faq-item" style="border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)">
+          <div class="faq-q" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer"><span>Jak szybko możecie rozpocząć montaż?</span><span>＋</span></div>
+          <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 16px"><p>Standardowo w ciągu 5–10 dni roboczych od akceptacji wyceny. W trybie pilnym często szybciej – zapytaj!</p></div>
+        </div>
+        <div class="faq-item" style="border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)">
+          <div class="faq-q" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer"><span>Czy prowadzicie serwis pogwarancyjny?</span><span>＋</span></div>
+          <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 16px"><p>Tak. Oferujemy umowy utrzymaniowe SLA oraz jednorazowe przeglądy i naprawy.</p></div>
+        </div>
+        <div class="faq-item" style="border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)">
+          <div class="faq-q" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer"><span>Czy pomagacie w doborze sprzętu?</span><span>＋</span></div>
+          <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease;padding:0 16px"><p>Tak – przygotujemy warianty (ekonomiczny / premium), z rozpisanym zakresem i parametrami.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="kontakt" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Kontakt</h2></div>
+      <form id="contactForm" novalidate>
+        <div class="row">
+          <div>
+            <label for="name">Imię i nazwisko*</label>
+            <input id="name" name="name" required placeholder="Jan Kowalski" />
+          </div>
+          <div>
+            <label for="email">E‑mail*</label>
+            <input id="email" name="email" type="email" required placeholder="jan@firma.pl" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="phone">Telefon</label>
+            <input id="phone" name="phone" placeholder="+48 600 000 000" />
+          </div>
+          <div>
+            <label for="topic">Temat</label>
+            <input id="topic" name="topic" placeholder="Wycena instalacji CCTV" />
+          </div>
+        </div>
+        <div class="row">
+          <div style="grid-column: span 2;">
+            <label for="msg">Wiadomość*</label>
+            <textarea id="msg" name="msg" required placeholder="Opisz krótko potrzeby: liczba kamer, piętra, metraż, termin..."></textarea>
+          </div>
+        </div>
+        <label class="consent"><input id="rodo" type="checkbox" required/> Wyrażam zgodę na kontakt w sprawie zapytania. Administratorem danych jest CTRL+IT. Dane użyte wyłącznie do odpowiedzi.</label>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Wyślij</button>
+          <small>lub napisz: <a href="mailto:kontakt@ctrlplusit.pl">kontakt@ctrlplusit.pl</a></small>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <div>© <span id="year"></span> CTRL+IT — Wszystkie prawa zastrzeżone.</div>
+      <div>Tel: <a href="tel:+48000000000">+48 000 000 000</a> <button class="copy-btn" data-copy="+48 000 000 000">Kopiuj</button> • E‑mail: <a href="mailto:kontakt@ctrlplusit.pl">kontakt@ctrlplusit.pl</a> <button class="copy-btn" data-copy="kontakt@ctrlplusit.pl">Kopiuj</button></div>
+    </div>
+  </footer>
+
+  <a href="#home" class="btn primary to-top" aria-label="Do góry">↑</a>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Podgląd realizacji">
+    <div class="img" id="lightboxImg"></div>
+    <button class="close" aria-label="Zamknij">✕</button>
+  </div>
+
+  <!-- Szybki kontakt (FAB) -->
+  <div class="fab" aria-label="Szybki kontakt">
+    <button class="fab-main" aria-expanded="false">✆</button>
+    <div class="menu" role="menu">
+      <a role="menuitem" href="tel:+48000000000">Zadzwoń</a>
+      <a role="menuitem" href="https://wa.me/48000000000" target="_blank" rel="noopener">WhatsApp</a>
+      <a role="menuitem" href="mailto:kontakt@ctrlplusit.pl">E‑mail</a>
+      <a role="menuitem" href="https://maps.google.com/?q=CTRL%2BIT" target="_blank" rel="noopener">Mapa</a>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu
+    (function(){
+      const hdr = document.getElementById('hdr');
+      const btn = hdr.querySelector('.menu-toggle');
+      btn.addEventListener('click',()=>{ const open = hdr.classList.toggle('open'); btn.setAttribute('aria-expanded', String(open)); });
+    })();
+
+    // Reveal on scroll
+    (function(){
+      const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {threshold:.15});
+      document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+    })();
+
+    // Counters
+    (function(){
+      const els = document.querySelectorAll('.num[data-count]');
+      const run = el => { const to = parseInt(el.dataset.count,10)||0; let cur=0; const dur=1100; const t0=performance.now(); const step=t=>{ const p=Math.min(1,(t-t0)/dur); cur=Math.floor(to*(0.5-Math.cos(p*Math.PI)/2)); el.textContent=cur; if(p<1) requestAnimationFrame(step);}; requestAnimationFrame(step); };
+      const io = new IntersectionObserver((ents)=>{ents.forEach(e=>{ if(e.isIntersecting){ run(e.target); io.unobserve(e.target);} });},{threshold:.6});
+      els.forEach(el=> io.observe(el));
+    })();
+
+    // FAQ
+    (function(){ document.querySelectorAll('.faq-item').forEach(it=>{ it.querySelector('.faq-q').addEventListener('click',()=>it.classList.toggle('open')); }); })();
+
+    // Lightbox (portfolio) – generuje abstrakcyjne tło inline, bez zewnętrznych plików
+    (function(){
+      const lb=document.querySelector('.lightbox'); const img=document.getElementById('lightboxImg'); const close=lb.querySelector('.close');
+      document.querySelectorAll('.thumb').forEach(t=> t.addEventListener('click',(e)=>{ e.preventDefault(); lb.classList.add('open'); img.style.background = `radial-gradient(40% 60% at 70% 20%, rgba(255,42,61,.25), transparent 60%),conic-gradient(from 180deg at 70% 30%, rgba(255,42,61,.24), transparent 45%)`; img.style.backgroundColor = '#0b0b0f'; }));
+      const hide=()=>lb.classList.remove('open'); close.addEventListener('click',hide); lb.addEventListener('click',(e)=>{ if(e.target===lb) hide(); }); window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') hide(); });
+    })();
+
+    // Back to top
+    (function(){ const btn=document.querySelector('.to-top'); const onScroll=()=>{ btn.classList.toggle('show', scrollY>500); }; window.addEventListener('scroll', onScroll, {passive:true}); onScroll(); })();
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Canvas: animowane "światłowody" + diody LED na liniach
+    (function(){
+      const canvas = document.getElementById('bg');
+      if(!canvas) return; const ctx = canvas.getContext('2d');
+      let w=0,h=0,dpr=1, lines=[]; let running=true; // zawsze ON
+
+      function resize(){ dpr = Math.min(2, window.devicePixelRatio||1); w = canvas.width = Math.floor(innerWidth*dpr); h = canvas.height = Math.floor(innerHeight*dpr); canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; init(); }
+      function rnd(min,max){ return Math.random()*(max-min)+min; }
+      function init(){ lines.length=0; for(let i=0;i<12;i++){ const y=rnd(h*0.2,h*0.85); const x0=-w*0.1, x3=w*1.1; const p1={x:rnd(w*0.15,w*0.45), y:y-rnd(h*0.15,h*0.35)}; const p2={x:rnd(w*0.55,w*0.85), y:y+rnd(h*0.10,h*0.30)}; lines.push({p0:{x:x0,y}, p1, p2, p3:{x:x3,y:y+rnd(-60,60)}, speed:rnd(0.04,0.09), phase:Math.random(), width:rnd(1.2,2.4)*dpr}); } }
+      function bez(p0,p1,p2,p3,t){ const it=1-t; return {x: it*it*it*p0.x + 3*it*it*t*p1.x + 3*it*t*t*p2.x + t*t*t*p3.x, y: it*it*it*p0.y + 3*it*it*t*p1.y + 3*it*t*t*p2.y + t*t*t*p3.y}; }
+      function draw(t){
+        ctx.clearRect(0,0,w,h); ctx.globalCompositeOperation='lighter';
+        for(const L of lines){
+          ctx.strokeStyle = 'rgba(255,42,61,0.18)'; ctx.lineWidth=L.width; ctx.shadowColor='rgba(255,42,61,0.35)'; ctx.shadowBlur=14*dpr;
+          ctx.beginPath(); ctx.moveTo(L.p0.x,L.p0.y); ctx.bezierCurveTo(L.p1.x,L.p1.y,L.p2.x,L.p2.y,L.p3.x,L.p3.y); ctx.stroke();
+          const tt = ((t*0.00005*L.speed)+L.phase)%1; const q=bez(L.p0,L.p1,L.p2,L.p3,tt);
+          ctx.fillStyle='rgba(255,42,61,0.9)'; ctx.shadowBlur=26*dpr; ctx.beginPath(); ctx.arc(q.x,q.y,2.6*dpr,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+        }
+        if(running) requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize); resize(); requestAnimationFrame(draw);
+    })();
+
+    // Czerwona kulka za kursorem (LED)
+    (function(){
+      const dot = document.getElementById('cursorLed'); if(!dot) return;
+      let x=innerWidth/2, y=innerHeight/2, tx=x, ty=y; const ease=.16; let raf;
+      function loop(){ x += (tx-x)*ease; y += (ty-y)*ease; dot.style.transform = `translate(${x}px, ${y}px)`; raf=requestAnimationFrame(loop); }
+      window.addEventListener('pointermove',(e)=>{ tx=e.clientX; ty=e.clientY; if(!raf) loop(); });
+      window.addEventListener('pointerdown',()=> dot.style.opacity=.98);
+      window.addEventListener('pointerup',()=> dot.style.opacity=.85);
+    })();
+
+    // Motyw dzień/noc
+    (function(){
+      const root=document.documentElement; const btn=document.getElementById('themeToggle');
+      const get=(k)=>{ try{return localStorage.getItem(k);}catch(e){return null;} };
+      const set=(k,v)=>{ try{localStorage.setItem(k,v);}catch(e){} };
+      const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light';
+      const saved = get('theme');
+      const init = saved || preferred || 'dark';
+      if(init==='light') root.setAttribute('data-theme','light');
+      if(btn){ btn.addEventListener('click',()=>{ const light = root.getAttribute('data-theme')==='light'; if(light){ root.removeAttribute('data-theme'); set('theme','dark'); btn.setAttribute('aria-pressed','false'); } else { root.setAttribute('data-theme','light'); set('theme','light'); btn.setAttribute('aria-pressed','true'); } }); }
+    })();
+
+    // Gauge (przepustowość / obciążenie)
+    (function(){
+      const c=document.getElementById('gauge'); if(!c) return; const ctx=c.getContext('2d');
+      function size(){ const r = c.getBoundingClientRect(); c.width=r.width*devicePixelRatio; c.height=r.height*devicePixelRatio; }
+      function draw(val){ const w=c.width, h=c.height; const cx=w/2, cy=h*0.9; const R=Math.min(w*0.42,h*0.9);
+        ctx.clearRect(0,0,w,h); ctx.save(); ctx.translate(cx,cy);
+        // tło łuku
+        ctx.beginPath(); ctx.arc(0,0,R,Math.PI,0); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=16*devicePixelRatio; ctx.stroke();
+        // wartość
+        const a = Math.PI + (Math.PI*val);
+        const grad = ctx.createLinearGradient(-R,0,R,0); grad.addColorStop(0,'rgba(255,42,61,0.2)'); grad.addColorStop(1,'rgba(255,42,61,0.9)');
+        ctx.beginPath(); ctx.arc(0,0,R,Math.PI,a); ctx.strokeStyle=grad; ctx.lineWidth=16*devicePixelRatio; ctx.lineCap='round'; ctx.stroke();
+        // wskazówka
+        ctx.rotate(a); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R,0); ctx.strokeStyle='rgba(255,42,61,0.9)'; ctx.lineWidth=3*devicePixelRatio; ctx.stroke();
+        ctx.restore();
+        // tekst
+        ctx.font=f`${14*devicePixelRatio}px ui-sans-serif`; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='center'; ctx.fillText(Math.round(val*100)+'%', cx, cy-10*devicePixelRatio);
+      }
+      size(); let target=Math.random()*0.9+0.1; let cur=0; function anim(){ cur += (target-cur)*0.02; if(Math.abs(target-cur)<0.01) target=Math.random()*0.9+0.1; draw(cur); requestAnimationFrame(anim); }
+      window.addEventListener('resize',()=>{ size(); });
+      anim();
+    })();
+
+    // Kalkulator wyceny
+    (function(){
+      const $=id=>document.getElementById(id);
+      const form=$('calc'); if(!form) return; const q=$('quote'), sum=$('sum'), bd=$('breakdown');
+      function price(){
+        const cams=+$('cameras').value||0; const res=+$('res').value; const fiber=+$('fiber').value||0; const poe=$('poe').checked; const ups=$('ups').checked; const remote=$('remote').checked;
+        const camBase = res===2?400:res===5?550:700; const camLabor=150; const nvr=800; const perCam=cams*(camBase+camLabor);
+        const fiberCost = fiber*3; const poeCost = poe?300:0; const upsCost=ups?400:0; const remoteCost=remote?250:0;
+        const total = perCam + nvr + fiberCost + poeCost + upsCost + remoteCost;
+        return {total, perCam, nvr, fiberCost, poeCost, upsCost, remoteCost, cams, camBase};
+      }
+      function fmt(z){ return new Intl.NumberFormat('pl-PL',{style:'currency',currency:'PLN',maximumFractionDigits:0}).format(z); }
+      function update(){ const p=price(); sum.textContent = fmt(p.total);
+        bd.textContent = `Kamery: ${p.cams} × ${fmt(p.camBase+150)} • NVR: ${fmt(p.nvr)} • Światłowód: ${fmt(p.fiberCost)}${p.poeCost?` • PoE: ${fmt(p.poeCost)}`:''}${p.upsCost?` • UPS: ${fmt(p.upsCost)}`:''}${p.remoteCost?` • Zdalny podgląd: ${fmt(p.remoteCost)}`:''}`; }
+      form.addEventListener('input', update); update();
+      const send=$('sendQuote'); send.addEventListener('click',(e)=>{ e.preventDefault(); const cams=$('cameras').value; const res=$('res').value; const fiber=$('fiber').value; const params=`Wycena online%0D%0AKamery: ${cams}%0D%0ARozdzielczość: ${res} MP%0D%0AŚwiatłowód: ${fiber} m%0D%0A%0D%0A${bd.textContent}%0D%0A${sum.textContent}`; window.location.href=`mailto:kontakt@ctrlplusit.pl?subject=${encodeURIComponent('Zapytanie — wycena online')}&body=${params}`; });
+    })();
+
+    // FAB menu + wibracje + kopiuj
+    (function(){
+      const fab=document.querySelector('.fab'); if(fab){ const main=fab.querySelector('.fab-main'); main.addEventListener('click',()=>{ fab.classList.toggle('open'); main.setAttribute('aria-expanded', fab.classList.contains('open')); if(navigator.vibrate) navigator.vibrate(12); }); document.addEventListener('click',(e)=>{ if(!fab.contains(e.target)) fab.classList.remove('open'); }); }
+      // wibracje na przyciskach
+      document.querySelectorAll('.btn, .fab .menu a').forEach(el=> el.addEventListener('click',()=>{ if(navigator.vibrate) navigator.vibrate(12); }));
+      // kopiuj z footer
+      document.querySelectorAll('[data-copy]').forEach(el=> el.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(el.getAttribute('data-copy')); if(navigator.vibrate) navigator.vibrate(8); el.textContent='Skopiowano!'; setTimeout(()=> el.textContent='Kopiuj', 1200); }catch(e){} }));
+    })();
+
+    // Motyw dzień/noc (inicjalizacja po reszcie, dla detekcji)
+    (function(){
+      const root=document.documentElement;
+      const get=(k)=>{ try{return localStorage.getItem(k);}catch(e){return null;} };
+      const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light';
+      const saved = get('theme');
+      if((saved||preferred)==='light'){ root.setAttribute('data-theme','light'); }
+    })();
+  </script>
+</body>
+</html>
