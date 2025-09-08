@@ -2,7 +2,8 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
   <title>CTRL+IT — Usługi IT i CCTV</title>
   <meta name="description" content="CTRL+IT — nowoczesne usługi IT i monitoring CCTV. Sieci, światłowody, bezpieczeństwo, wdrożenia i serwis. Ciemny motyw z czerwonymi akcentami LED." />
   <meta name="theme-color" content="#0b0b0f" />
@@ -10,11 +11,12 @@
     /* Base */
     *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
     :root{
       --bg:#0b0b0f;--surface:#12121a;--muted:#9aa0a6;--text:#e8eaed;--accent:#ff2a3d;--accent2:#ff6b6b;--border:rgba(255,255,255,.08);--radius:18px
     }
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;color:var(--text);background:var(--bg);overflow-x:hidden}
+    img,svg{max-width:100%;height:auto}
     /* delikatna siatka LED + poświata */
     body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.6;background-image:radial-gradient(circle at 2px 2px, rgba(255,60,70,.16) 1px, transparent 2px),radial-gradient(circle at 1px 1px, rgba(255,60,70,.06) 1px, transparent 2px);background-size:40px 40px,20px 20px}
 
@@ -62,7 +64,7 @@
     .card h3{margin:0 0 8px;font-size:18px}
     .card p{margin:0;color:var(--muted);font-size:14px}
 
-    .portfolio .thumb{position:relative;aspect-ratio:16/10;border-radius:calc(var(--radius) - 4px);overflow:hidden;border:1px solid var(--border);background:#0f0f15}
+    .portfolio .thumb{position:relative;aspect-ratio:16/10;border-radius:calc(var(--radius) - 4px);overflow:hidden;border:1px solid var(--border);background:#0f0f15;background-size:cover;background-position:center}
     .thumb .overlay{position:absolute;inset:0;background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.0));opacity:0;transition:opacity .25s}
     .thumb:hover .overlay{opacity:1}
     .thumb .zoom{position:absolute;bottom:10px;right:10px;font-size:12px;background:rgba(0,0,0,.5);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
@@ -75,7 +77,7 @@
     form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     form .row{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:12px}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input,textarea{width:100%;background:#0e0e14;color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+    input,textarea{width:100%;background:#0e0e14;color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:16px;outline:none}
     textarea{min-height:120px;resize:vertical}
     .consent{grid-column:span 2;font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
     .consent input{width:18px;height:18px;margin-top:2px}
@@ -88,14 +90,27 @@
     .reveal{opacity:0;transform:translateY(18px);filter:saturate(.9);transition:opacity .6s, transform .6s, filter .6s}
     .reveal.in{opacity:1;transform:none;filter:none}
 
-    /* Light theme overrides */
+    @media (prefers-reduced-motion: reduce){
+      .scan{animation:none}
+      .reveal{transition:none}
+      .card:hover{transform:none}
+    }
+  /* Light theme overrides */
     html[data-theme="light"]{
       --bg:#f7f7f9; --surface:#ffffff; --text:#0f1115; --muted:#4b5563; --border:rgba(0,0,0,.12);
     }
 
     /* Gauge */
-    #gaugeWrap{display:inline-block; padding:14px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    #gauge{display:block; width:240px; height:140px}
+    .net-note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5}
+    .net-note strong{color:#fff}
+    .net-note em{font-style:normal;color:#ffb3b8}
+
+    /* Gauge */
+    .gauges{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .gaugeWrap{display:inline-block; padding:14px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); box-shadow:0 10px 30px rgba(0,0,0,.35); cursor:pointer}
+    #gaugeDL,#gaugeUL{display:block; width:220px; height:130px}
+    .gaugeLabel{font-size:12px; text-align:center; color:var(--muted); margin-top:2px}
+    .gaugeVal{font-size:12px; text-align:center; color:var(--muted); margin-top:2px}
 
     /* Timeline */
     .timeline .steps{display:grid; grid-template-columns:repeat(5,1fr); gap:12px}
@@ -113,11 +128,35 @@
     /* Copy tooltip */
     .copy-btn{border:1px solid var(--border); background:rgba(255,255,255,.03); color:var(--text); border-radius:10px; padding:4px 8px; cursor:pointer}
 
-    @media (prefers-reduced-motion: reduce){
-      .scan{animation:none}
-      .reveal{transition:none}
-      .card:hover{transform:none}
+  /* Placeholder dla miniatur gdy zewnętrzne zdjęcia są blokowane */
+    .portfolio .thumb.card{ padding:0 }
+    .portfolio .thumb{ position:relative; aspect-ratio:16/10; border-radius:calc(var(--radius) - 4px); overflow:hidden; border:1px solid var(--border); background:#0f0f15; background-size:cover; background-position:center; display:block; box-sizing:border-box }
+    .portfolio .thumb .overlay{ position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.0)); opacity:0; transition:opacity .25s; pointer-events:none }
+    .portfolio .thumb:hover .overlay{ opacity:1 }
+    /* ukryj wszystkie .zoom globalnie, pokaż tylko w kafelkach */
+    .zoom{ display:none }
+    .portfolio .thumb > .zoom{ display:inline-block }
+    .portfolio .thumb .zoom{ position:absolute; bottom:10px; right:10px; font-size:12px; background:rgba(0,0,0,.5); border:1px solid var(--border); padding:6px 10px; border-radius:999px; pointer-events:none; color:#fff }
+    .portfolio .thumb.fallback{ background:
+      radial-gradient(120% 120% at 100% 0%, rgba(255,42,61,.10), transparent 60%),
+      repeating-linear-gradient(135deg, #151520 0 8px, #101016 8px 16px);
     }
+    /* Label "CCTV" tylko w fallbacku (bez wstrzykiwania HTML) */
+    .portfolio .thumb.fallback::before{ content: attr(data-label); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; letter-spacing:1px; color:#ffb3b8; text-shadow:0 0 14px rgba(255,42,61,.35); opacity:.7; pointer-events:none }
+    /* Ukryj ewentualne stare span.ph */
+    .portfolio .thumb .ph{ display:none !important }
+  /* Placeholder dla miniatur gdy zewnętrzne zdjęcia są blokowane */
+    .portfolio .thumb.card{ padding:0 }
+    .portfolio .thumb{ position:relative; aspect-ratio:16/10; border-radius:calc(var(--radius) - 4px); overflow:hidden; border:1px solid var(--border); background:#0f0f15; background-size:cover; background-position:center; display:block; box-sizing:border-box }
+    .portfolio .thumb .overlay{ position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.0)); opacity:0; transition:opacity .25s; pointer-events:none; z-index:1 }
+    .portfolio .thumb:hover .overlay{ opacity:1 }
+    .portfolio .thumb > .zoom{ position:absolute; bottom:10px; right:10px; font-size:12px; background:rgba(0,0,0,.5); border:1px solid var(--border); padding:6px 10px; border-radius:999px; pointer-events:none; color:#fff; z-index:2 }
+    .portfolio .thumb.fallback{ background:
+      radial-gradient(120% 120% at 100% 0%, rgba(255,42,61,.10), transparent 60%),
+      repeating-linear-gradient(135deg, #151520 0 8px, #101016 8px 16px);
+    }
+    .portfolio .thumb.fallback::before{ content: attr(data-label); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; letter-spacing:1px; color:#ffb3b8; text-shadow:0 0 14px rgba(255,42,61,.35); opacity:.7; pointer-events:none; z-index:0 }
+    .portfolio .thumb .ph{ display:none !important }
   </style>
 </head>
 <body>
@@ -160,8 +199,20 @@
         <div class="hero-cta">
           <a class="btn primary" href="#oferta">Zobacz usługi</a>
           <a class="btn" href="#kontakt">Skontaktuj się</a>
-          <div id="gaugeWrap"><canvas id="gauge"></canvas></div>
+          <div class="gauges">
+            <div class="gaugeWrap" id="dlWrap" title="Kliknij, aby przetestować pobieranie">
+              <canvas id="gaugeDL"></canvas>
+              <div class="gaugeLabel">Pobieranie</div>
+              <div class="gaugeVal" id="valDL">— Mbps</div>
+            </div>
+            <div class="gaugeWrap" id="ulWrap" title="Kliknij, aby przetestować wysyłanie">
+              <canvas id="gaugeUL"></canvas>
+              <div class="gaugeLabel">Wysyłanie</div>
+              <div class="gaugeVal" id="valUL">— Mbps</div>
+            </div>
+          </div></div>
         </div>
+        <div class="net-note card" role="note"><strong>Test prędkości łącza.</strong> To orientacyjny pomiar w przeglądarce. <em>Pobieranie</em> wpływa na szybkość podglądu/odtwarzania, a <em>Wysyłanie</em> decyduje o jakości zdalnego podglądu z obiektu (strumień z kamer). Wyniki zależą od obciążenia sieci, Wi‑Fi i routera. Rekomendacje: HD ≥ 5–10&nbsp;Mbps upload, 4K ≥ 20–35&nbsp;Mbps. Nic nie zapisujemy.</div>
         <div class="stats" style="display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:12px;margin-top:28px">
           <div class="card" style="text-align:center"><div class="num" data-count="12" style="font-weight:800;font-size:clamp(22px,2.4vw,32px)">0</div><div class="lbl" style="color:var(--muted);font-size:13px">lat doświadczenia</div></div>
           <div class="card" style="text-align:center"><div class="num" data-count="350" style="font-weight:800;font-size:clamp(22px,2.4vw,32px)">0</div><div class="lbl" style="color:var(--muted);font-size:13px">zrealizowanych obiektów</div></div>
@@ -231,6 +282,25 @@
       </form>
     </section>
 
+    <section id="portfolio" class="container reveal">
+      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Wybrane realizacje</h2></div>
+      <div class="grid portfolio">
+        <a class="card thumb" href="#" data-shot="1" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?cctv,security-camera" style="background-image:url('https://source.unsplash.com/800x500/?cctv,security-camera')" aria-label="Realizacja 1 – monitoring zewnętrzny"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="2" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?server,datacenter" style="background-image:url('https://source.unsplash.com/800x500/?server,datacenter')" aria-label="Realizacja 2 – serwerownia"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="3" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?fiber-optic,cable" style="background-image:url('https://source.unsplash.com/800x500/?fiber-optic,cable')" aria-label="Realizacja 3 – światłowody"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="4" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?rack,patch-panel,network" style="background-image:url('https://source.unsplash.com/800x500/?rack,patch-panel,network')" aria-label="Realizacja 4 – szafa rack"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="5" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?office,networking,access-point" style="background-image:url('https://source.unsplash.com/800x500/?office,networking,access-point')" aria-label="Realizacja 5 – sieć biurowa"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="6" data-label="CCTV" data-img="https://source.unsplash.com/800x500/?control-room,monitor-wall" style="background-image:url('https://source.unsplash.com/800x500/?control-room,monitor-wall')" aria-label="Realizacja 6 – centrum monitoringu"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+      </div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="2" aria-label="Realizacja 2 – biurowiec"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="3" aria-label="Realizacja 3 – osiedle"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="4" aria-label="Realizacja 4 – hala"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="5" aria-label="Realizacja 5 – sklep"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+        <a class="card thumb" href="#" data-shot="6" aria-label="Realizacja 6 – hotel"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
+      </div>
+    </section>
+
+    <!-- Etapy wdrożenia (timeline) -->
     <section id="timeline" class="container reveal">
       <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Jak pracujemy</h2></div>
       <div class="timeline">
@@ -241,18 +311,6 @@
           <div class="step card"><strong>4. Uruchomienie</strong><p>NVR, aplikacje, testy.</p></div>
           <div class="step card"><strong>5. Szkolenie</strong><p>Instruktaż + dokumentacja.</p></div>
         </div>
-      </div>
-    </section>
-
-    <section id="portfolio" class="container reveal">
-      <div class="section-title"><span class="led" aria-hidden="true"></span><h2>Wybrane realizacje</h2></div>
-      <div class="grid portfolio">
-        <a class="card thumb" href="#" data-shot="1" aria-label="Realizacja 1 – magazyn"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
-        <a class="card thumb" href="#" data-shot="2" aria-label="Realizacja 2 – biurowiec"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
-        <a class="card thumb" href="#" data-shot="3" aria-label="Realizacja 3 – osiedle"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
-        <a class="card thumb" href="#" data-shot="4" aria-label="Realizacja 4 – hala"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
-        <a class="card thumb" href="#" data-shot="5" aria-label="Realizacja 5 – sklep"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
-        <a class="card thumb" href="#" data-shot="6" aria-label="Realizacja 6 – hotel"><div class="overlay"></div><span class="zoom">Powiększ</span></a>
       </div>
     </section>
 
@@ -319,13 +377,6 @@
     </div>
   </footer>
 
-  <a href="#home" class="btn primary to-top" aria-label="Do góry">↑</a>
-
-  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Podgląd realizacji">
-    <div class="img" id="lightboxImg"></div>
-    <button class="close" aria-label="Zamknij">✕</button>
-  </div>
-
   <!-- Szybki kontakt (FAB) -->
   <div class="fab" aria-label="Szybki kontakt">
     <button class="fab-main" aria-expanded="false">✆</button>
@@ -335,6 +386,13 @@
       <a role="menuitem" href="mailto:kontakt@ctrlplusit.pl">E‑mail</a>
       <a role="menuitem" href="https://maps.google.com/?q=CTRL%2BIT" target="_blank" rel="noopener">Mapa</a>
     </div>
+  </div>
+
+  <a href="#home" class="btn primary to-top" aria-label="Do góry">↑</a>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Podgląd realizacji">
+    <div class="img" id="lightboxImg"></div>
+    <button class="close" aria-label="Zamknij">✕</button>
   </div>
 
   <script>
@@ -362,10 +420,11 @@
     // FAQ
     (function(){ document.querySelectorAll('.faq-item').forEach(it=>{ it.querySelector('.faq-q').addEventListener('click',()=>it.classList.toggle('open')); }); })();
 
-    // Lightbox (portfolio) – generuje abstrakcyjne tło inline, bez zewnętrznych plików
+    // Lightbox (portfolio) – otwieraj zdjęcie z data-img
     (function(){
       const lb=document.querySelector('.lightbox'); const img=document.getElementById('lightboxImg'); const close=lb.querySelector('.close');
-      document.querySelectorAll('.thumb').forEach(t=> t.addEventListener('click',(e)=>{ e.preventDefault(); lb.classList.add('open'); img.style.background = `radial-gradient(40% 60% at 70% 20%, rgba(255,42,61,.25), transparent 60%),conic-gradient(from 180deg at 70% 30%, rgba(255,42,61,.24), transparent 45%)`; img.style.backgroundColor = '#0b0b0f'; }));
+      function openWith(url){ lb.classList.add('open'); img.style.background = `#0b0b0f url('${url}') center/contain no-repeat`; }
+      document.querySelectorAll('.thumb').forEach(t=> t.addEventListener('click',(e)=>{ e.preventDefault(); const url=t.getAttribute('data-img'); if(url){ openWith(url); } }));
       const hide=()=>lb.classList.remove('open'); close.addEventListener('click',hide); lb.addEventListener('click',(e)=>{ if(e.target===lb) hide(); }); window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') hide(); });
     })();
 
@@ -379,7 +438,7 @@
     (function(){
       const canvas = document.getElementById('bg');
       if(!canvas) return; const ctx = canvas.getContext('2d');
-      let w=0,h=0,dpr=1, lines=[]; let running=true; // zawsze ON
+      let w=0,h=0,dpr=1, lines=[]; let running=true; // zawsze ON (bez parallax, bez storage)
 
       function resize(){ dpr = Math.min(2, window.devicePixelRatio||1); w = canvas.width = Math.floor(innerWidth*dpr); h = canvas.height = Math.floor(innerHeight*dpr); canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; init(); }
       function rnd(min,max){ return Math.random()*(max-min)+min; }
@@ -407,8 +466,7 @@
       window.addEventListener('pointerdown',()=> dot.style.opacity=.98);
       window.addEventListener('pointerup',()=> dot.style.opacity=.85);
     })();
-
-    // Motyw dzień/noc
+      // Motyw dzień/noc
     (function(){
       const root=document.documentElement; const btn=document.getElementById('themeToggle');
       const get=(k)=>{ try{return localStorage.getItem(k);}catch(e){return null;} };
@@ -420,27 +478,97 @@
       if(btn){ btn.addEventListener('click',()=>{ const light = root.getAttribute('data-theme')==='light'; if(light){ root.removeAttribute('data-theme'); set('theme','dark'); btn.setAttribute('aria-pressed','false'); } else { root.setAttribute('data-theme','light'); set('theme','light'); btn.setAttribute('aria-pressed','true'); } }); }
     })();
 
-    // Gauge (przepustowość / obciążenie)
+    // Gauges (download + upload, do 1000 Mbps)
     (function(){
-      const c=document.getElementById('gauge'); if(!c) return; const ctx=c.getContext('2d');
-      function size(){ const r = c.getBoundingClientRect(); c.width=r.width*devicePixelRatio; c.height=r.height*devicePixelRatio; }
-      function draw(val){ const w=c.width, h=c.height; const cx=w/2, cy=h*0.9; const R=Math.min(w*0.42,h*0.9);
-        ctx.clearRect(0,0,w,h); ctx.save(); ctx.translate(cx,cy);
-        // tło łuku
-        ctx.beginPath(); ctx.arc(0,0,R,Math.PI,0); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=16*devicePixelRatio; ctx.stroke();
-        // wartość
-        const a = Math.PI + (Math.PI*val);
-        const grad = ctx.createLinearGradient(-R,0,R,0); grad.addColorStop(0,'rgba(255,42,61,0.2)'); grad.addColorStop(1,'rgba(255,42,61,0.9)');
-        ctx.beginPath(); ctx.arc(0,0,R,Math.PI,a); ctx.strokeStyle=grad; ctx.lineWidth=16*devicePixelRatio; ctx.lineCap='round'; ctx.stroke();
-        // wskazówka
-        ctx.rotate(a); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R,0); ctx.strokeStyle='rgba(255,42,61,0.9)'; ctx.lineWidth=3*devicePixelRatio; ctx.stroke();
-        ctx.restore();
-        // tekst
-        ctx.font=`${14*devicePixelRatio}px ui-sans-serif`; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='center'; ctx.fillText(Math.round(val*100)+'%', cx, cy-10*devicePixelRatio);
+      const MAX = 1000; // Mbps skala
+      function setupGauge(canvas){
+        if(!canvas) return null; const ctx=canvas.getContext('2d');
+        function size(){ const r=canvas.getBoundingClientRect(); canvas.width=r.width*devicePixelRatio; canvas.height=r.height*devicePixelRatio; }
+        function draw(frac, text){ const w=canvas.width, h=canvas.height; const cx=w/2, cy=h*0.9; const R=Math.min(w*0.42,h*0.9);
+          ctx.clearRect(0,0,w,h); ctx.save(); ctx.translate(cx,cy);
+          ctx.beginPath(); ctx.arc(0,0,R,Math.PI,0); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=16*devicePixelRatio; ctx.stroke();
+          const a = Math.PI + Math.PI*Math.max(0,Math.min(1,frac||0));
+          const grad = ctx.createLinearGradient(-R,0,R,0); grad.addColorStop(0,'rgba(255,42,61,0.2)'); grad.addColorStop(1,'rgba(255,42,61,0.9)');
+          ctx.beginPath(); ctx.arc(0,0,R,Math.PI,a); ctx.strokeStyle=grad; ctx.lineWidth=16*devicePixelRatio; ctx.lineCap='round'; ctx.stroke();
+          ctx.rotate(a); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R,0); ctx.strokeStyle='rgba(255,42,61,0.9)'; ctx.lineWidth=3*devicePixelRatio; ctx.stroke();
+          ctx.restore();
+          ctx.font=`${14*devicePixelRatio}px ui-sans-serif`; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='center'; ctx.fillText(text||'', w/2, cy-10*devicePixelRatio);
+        }
+        size(); window.addEventListener('resize', size);
+        let cur=0, target=0, label='— Mbps';
+        function tick(){ cur += (target-cur)*0.08; draw(cur, label); requestAnimationFrame(tick); }
+        tick();
+        return { set:(mbps)=>{ target=Math.min(1, mbps/MAX); label=`${Math.round(mbps)} Mbps`; }, setLabel:(t)=>{ label=t; }, reset:()=>{ target=0; label='— Mbps'; } };
       }
-      size(); let target=Math.random()*0.9+0.1; let cur=0; function anim(){ cur += (target-cur)*0.02; if(Math.abs(target-cur)<0.01) target=Math.random()*0.9+0.1; draw(cur); requestAnimationFrame(anim); }
-      window.addEventListener('resize',()=>{ size(); });
-      anim();
+
+      // Elementy
+      const dlGauge = setupGauge(document.getElementById('gaugeDL'));
+      const ulGauge = setupGauge(document.getElementById('gaugeUL'));
+      const dlWrap = document.getElementById('dlWrap');
+      const ulWrap = document.getElementById('ulWrap');
+      const valDL = document.getElementById('valDL');
+      const valUL = document.getElementById('valUL');
+
+      const saveData = (navigator.connection && navigator.connection.saveData) || false;
+
+      // Pomiar pobierania (download)
+      async function dlOnce(bytes, timeoutMs=8000){
+        const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), timeoutMs);
+        const url=`https://speed.cloudflare.com/__down?bytes=${bytes}&r=${Math.random()}`;
+        const t0=performance.now(); let received=0;
+        try{
+          const res=await fetch(url,{cache:'no-store',signal:ctrl.signal});
+          if(!res.ok || !res.body) throw new Error('HTTP '+res.status);
+          const reader=res.body.getReader();
+          while(true){ const {done,value}=await reader.read(); if(done) break; received += value.byteLength; }
+          const dt = performance.now()-t0; return {bytes:received, ms:dt};
+        } finally{ clearTimeout(t); }
+      }
+      async function measureDL(){
+        try{
+          dlGauge.setLabel('Testuję…'); valDL.textContent='Testuję…';
+          const sizes = saveData ? [400_000, 800_000] : [1_000_000, 4_000_000, 8_000_000];
+          let b=0, ms=0; for(const s of sizes){ const r=await dlOnce(s); b+=r.bytes; ms+=r.ms; dlGauge.set((b*8)/(ms/1000)/1e6); }
+          const mbps = (b*8)/(ms/1000)/1e6; valDL.textContent = `${mbps.toFixed(0)} Mbps`; dlGauge.set(mbps);
+        } catch(e){
+          // Fallback przez obraz (ok. 8 MB)
+          try{ dlGauge.setLabel('Testuję…'); valDL.textContent='Testuję…';
+            const start=performance.now(); await new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(); img.onerror=rej; img.src='https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg?nocache='+Math.random(); });
+            const dt=performance.now()-start; const sizeBytes=8_000_000; const mbps=(sizeBytes*8)/(dt/1000)/1e6; valDL.textContent=`${Math.max(1,mbps|0)} Mbps`; dlGauge.set(mbps);
+          } catch(err){ valDL.textContent='Brak pomiaru'; dlGauge.set(0); }
+        }
+      }
+
+      // Pomiar wysyłania (upload)
+      function makeBuf(n){ const u=new Uint8Array(n); if(window.crypto&&crypto.getRandomValues){ crypto.getRandomValues(u); } else { for(let i=0;i<n;i++) u[i]=(i*31)%255; } return u; }
+      async function ulOnce(bytes, endpoint, timeoutMs=8000){
+        const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(), timeoutMs);
+        const t0=performance.now();
+        try{
+          await fetch(endpoint, { method:'POST', mode:'no-cors', cache:'no-store', body:makeBuf(bytes), headers:{'Content-Type':'application/octet-stream'}, signal:ctrl.signal });
+          const dt=performance.now()-t0; return {bytes, ms:dt};
+        } finally{ clearTimeout(t); }
+      }
+      async function measureUL(){
+        ulGauge.setLabel('Testuję…'); valUL.textContent='Testuję…';
+        const eps = ['https://speed.cloudflare.com/__up','https://httpbin.org/post'];
+        let ok=false, b=0, ms=0;
+        for(const ep of eps){
+          try{
+            b=0; ms=0; const sizes = saveData ? [300_000, 600_000] : [500_000, 1_000_000, 2_000_000];
+            for(const s of sizes){ const r=await ulOnce(s, ep); b+=r.bytes; ms+=r.ms; ulGauge.set((b*8)/(ms/1000)/1e6); }
+            ok=true; break;
+          }catch(e){ continue; }
+        }
+        if(ok){ const mbps=(b*8)/(ms/1000)/1e6; valUL.textContent=`${mbps.toFixed(0)} Mbps`; ulGauge.set(mbps); }
+        else { valUL.textContent='Brak pomiaru'; ulGauge.set(0); }
+      }
+
+      if(dlWrap) dlWrap.addEventListener('click', measureDL);
+      if(ulWrap) ulWrap.addEventListener('click', measureUL);
+
+      // Start: najpierw DL, potem UL
+      measureDL().then(()=>measureUL());
     })();
 
     // Kalkulator wyceny
@@ -470,13 +598,31 @@
       document.querySelectorAll('[data-copy]').forEach(el=> el.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(el.getAttribute('data-copy')); if(navigator.vibrate) navigator.vibrate(8); el.textContent='Skopiowano!'; setTimeout(()=> el.textContent='Kopiuj', 1200); }catch(e){} }));
     })();
 
-    // Motyw dzień/noc (inicjalizacja po reszcie, dla detekcji)
+      // Preload miniatur + fallback (bez wstrzykiwania znaczników)
     (function(){
-      const root=document.documentElement;
-      const get=(k)=>{ try{return localStorage.getItem(k);}catch(e){return null;} };
-      const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light';
-      const saved = get('theme');
-      if((saved||preferred)==='light'){ root.setAttribute('data-theme','light'); }
+      document.querySelectorAll('.thumb').forEach(el=>{
+        const url = el.getAttribute('data-img');
+        if(!url){ el.classList.add('fallback'); return; }
+        const img = new Image(); img.referrerPolicy='no-referrer';
+        img.onload = ()=>{ el.style.backgroundImage = `url('${url}')`; el.classList.remove('fallback'); };
+        img.onerror = ()=>{ el.classList.add('fallback'); };
+        img.src = url + (url.includes('?')?'&':'?') + 'cache=' + Math.random();
+        setTimeout(()=>{ if(!el.style.backgroundImage) el.classList.add('fallback'); }, 5000);
+      });
+    })();
+      // Cleanup: usuń stare placeholdery i ewentualne wyrwane elementy + deduplikacja 'Powiększ'
+    (function(){
+      // 1) usuń stare <span class="ph">CCTV</span>
+      document.querySelectorAll('.thumb .ph').forEach(n=> n.remove());
+      // 2) usuń .zoom poza .thumb
+      document.querySelectorAll('.zoom').forEach(n=>{ if(!n.closest('.thumb')) n.remove(); });
+      // 3) w każdym kafelku zostaw tylko jeden .zoom i przenieś go na koniec (aby overlay go nie zasłaniał)
+      document.querySelectorAll('.grid.portfolio .thumb').forEach(th=>{
+        const zs = th.querySelectorAll('.zoom');
+        zs.forEach((z,i)=>{ if(i>0) z.remove(); });
+        const z = th.querySelector('.zoom');
+        if(z) th.appendChild(z);
+      });
     })();
   </script>
 </body>
